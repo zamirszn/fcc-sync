@@ -1,0 +1,8 @@
+README.md
+fcc_sync.py
+pyproject.toml
+fcc_sync.egg-info/PKG-INFO
+fcc_sync.egg-info/SOURCES.txt
+fcc_sync.egg-info/dependency_links.txt
+fcc_sync.egg-info/entry_points.txt
+fcc_sync.egg-info/top_level.txt

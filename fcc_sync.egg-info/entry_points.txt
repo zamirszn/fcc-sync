@@ -1,0 +1,2 @@
+[console_scripts]
+fcc-sync = fcc_sync:main

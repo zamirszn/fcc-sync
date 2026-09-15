@@ -1,6 +1,14 @@
+Metadata-Version: 2.4
+Name: fcc-sync
+Version: 1.1.0
+Summary: One-command export/import of free-claude-code provider configuration between devices
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+
 # fcc-sync
 
-One-command export/import of [free-claude-code](https://pypi.org/project/free-claude-code/) (fcc) configuration between devices. **Linux, macOS, and Windows.** One plain Python file, zero dependencies — any Python ≥ 3.10 runs it.
+One-command export/import of [free-claude-code](https://pypi.org/project/free-claude-code/) (fcc) configuration between devices. **Linux, macOS, and Windows.**
 
 `fcc` keeps all its configuration — API keys for **every provider it supports** (any of the 40+ in its catalog: Gemini, OpenAI/ChatGPT, Groq, OpenRouter, Mistral, Cerebras, Kimi, DeepSeek, Cloudflare, Bedrock, ...), OAuth login tokens, base URLs, proxies, and model routing — in `~/.fcc/`. fcc-sync bundles exactly that into a single small tarball and restores it anywhere, installing fcc itself if the target machine doesn't have it.
 
@@ -8,21 +16,22 @@ Nothing is provider-specific: whatever providers you've configured (or add in fu
 
 ## Install
 
-Linux / macOS:
+With [uv](https://docs.astral.sh/uv/) (recommended — you'll want it for fcc anyway):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/zamirszn/fcc-sync/main/fcc-sync.py -o ~/.local/bin/fcc-sync
-chmod +x ~/.local/bin/fcc-sync
+uv tool install git+https://github.com/zamirszn/fcc-sync
 ```
 
-Windows (PowerShell):
+No uv yet? One line first:
 
-```powershell
-mkdir $env:USERPROFILE\.local\bin -Force
-irm https://raw.githubusercontent.com/zamirszn/fcc-sync/main/fcc-sync.py -o $env:USERPROFILE\.local\bin\fcc-sync.py
+- Linux/macOS: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- Windows (PowerShell): `irm https://astral.sh/uv/install.ps1 | iex`
+
+Or run it directly with any Python ≥ 3.10, no install:
+
+```bash
+python fcc_sync.py <command>
 ```
-
-Or just grab `fcc-sync.py` and run it anywhere with `python fcc-sync.py <command>`.
 
 ## Usage
 
@@ -61,8 +70,7 @@ If the new machine has neither fcc nor `uv`, import installs both. One command, 
 - Bundles are **plain unencrypted tarballs containing your API keys** — move them over a trusted channel, and don't commit them to anything public.
 - OAuth tokens occasionally turn out to be machine-bound; if a provider shows disconnected after import, re-do its login in the [fcc admin UI](http://127.0.0.1:8082/admin).
 - Import never destroys data silently: existing config is copied to `~/.fcc/.env.bak-<timestamp>` first.
-- Windows uses `taskkill`/PowerShell for the same lifecycle steps the Unix path does with `pkill`; everything else is plain Python stdlib, so the same file works everywhere.
-- If a target machine has no fcc, import tries to install it. fcc needs Python ≥ 3.14, so import falls back to [uv](https://docs.astral.sh/uv/) (installing uv if needed) purely for that step — fcc-sync itself never requires uv to run.
+- Windows uses `taskkill`/PowerShell for the same lifecycle steps the Unix path does with `pkill`/`nohup`; everything else is plain Python stdlib.
 
 ## License
 
