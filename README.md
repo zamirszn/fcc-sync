@@ -18,9 +18,30 @@ chmod +x ~/.local/bin/fcc-sync
 Windows (PowerShell):
 
 ```powershell
-mkdir $env:USERPROFILE\.local\bin -Force
-irm https://raw.githubusercontent.com/zamirszn/fcc-sync/main/fcc-sync.py -o $env:USERPROFILE\.local\bin\fcc-sync.py
+$bin = Join-Path $env:USERPROFILE ".local\bin"
+New-Item -ItemType Directory -Force $bin | Out-Null
+Invoke-RestMethod https://raw.githubusercontent.com/zamirszn/fcc-sync/main/fcc-sync.py -OutFile (Join-Path $bin "fcc-sync.py")
+@'
+@echo off
+where python >nul 2>nul
+if %errorlevel%==0 (
+  python "%~dp0fcc-sync.py" %*
+) else (
+  py "%~dp0fcc-sync.py" %*
+)
+exit /b %errorlevel%
+'@ | Set-Content -Encoding ASCII (Join-Path $bin "fcc-sync.cmd")
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if ([string]::IsNullOrWhiteSpace($userPath)) {
+  [Environment]::SetEnvironmentVariable("Path", $bin, "User")
+  $env:Path += ";$bin"
+} elseif (($userPath -split ";") -notcontains $bin) {
+  [Environment]::SetEnvironmentVariable("Path", ($userPath.TrimEnd(";") + ";$bin"), "User")
+  $env:Path += ";$bin"
+}
 ```
+
+The Windows installer creates `fcc-sync.cmd`, so PowerShell can run `fcc-sync` as a bare command. If an already-open terminal still cannot find it, open a new PowerShell window so it picks up the updated PATH.
 
 Or just grab `fcc-sync.py` and run it anywhere with `python fcc-sync.py <command>`.
 
